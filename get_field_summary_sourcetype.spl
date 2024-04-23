@@ -1,6 +1,10 @@
 index=*linux* sourcetype="linux_audit" 
 | fields - _raw 
 | fieldsummary maxvals=1 
-| spath input=values path={}.value output=real_value
+| spath input=values path={}.value output=real_value 
 | eval field_type = typeof(real_value) 
-| table field, values, field_type
+| eval field_type = case( match(real_value, "^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"), "ip",  
+match(real_value, "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$"), "mac",
+match(real_value, "^([0-9A-Fa-f]{2}:){13}[0-9A-Fa-f]{2}$"), "mac",
+true(), typeof(real_value) ) 
+| table field,real_value, field_type
