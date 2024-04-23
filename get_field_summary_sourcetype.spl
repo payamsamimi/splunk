@@ -1,0 +1,6 @@
+index=*linux* sourcetype="linux_audit" 
+| fields - _raw 
+| fieldsummary maxvals=1 
+| spath input=values path={}.value output=real_value
+| eval field_type = typeof(real_value) 
+| table field, values, field_type
